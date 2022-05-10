@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<!-- 합쳐지고 최소화된 최신 CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+<!-- 부가적인 테마 -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+<!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<body>
+
+<div class="container" style="margin-top: 10px;">
+    <div class="row">
+        <div class="col-xs-3">
+            <a href="/">로고</a>
+        </div>
+        <div class="col-xs-4"></div>
+        <div class="col-xs-2"><a href="/board">자유게시판</a></div>
+        <div class="col-xs-1"><a href="/login">로그인</a></div>
+        <div class="col-xs-2">
+            <button type="submit" onclick="location.href='/myPage'"  >
+                마이페이지
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="container" style="margin-top: 100px;">
+    <div class="row" style="text-align: center;">
+        <h1>게시글 작성</h1>
+    </div>
+    <div class="row">
+        <div style="text-align: center; margin-top: 40px">
+            <div style="text-align: center">
+                <input type="text" id="title"
+                       placeholder="제목을 입력해주세요" style="width: 500px; margin-bottom: 10px;">
+            </div>
+            <div style="text-align: center">
+                <textarea id="content" placeholder="내용을 입력해주세요" style="width: 500px; height: 600px; "></textarea>
+            </div>
+            <div style="text-align: center">
+                <button class="btn btn-outline-secondary" id = "writeComplete">게시물 작성</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function () {
+        $("#writeComplete").on('click', function() {
+            writeComplete();
+        })
+    });
+    function writeComplete() {
+        $.ajax({
+            url: "/saveContent",
+            type: "GET",
+            data: {
+                title:$("#title").val(),
+                content:$("#content").val()
+            },
+            success: function(data){
+                if(data ==true){
+                    alert("정상적으로 글작성이 완료되었습니다. ")
+                    window.location.href = "/board";
+                }
+            },error:function() {
+                alert("error");
+            }
+        });
+    }
+
+</script>
+
+
+</body>
+</html>

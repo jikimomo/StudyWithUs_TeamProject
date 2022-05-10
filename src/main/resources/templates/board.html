@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<!-- 합쳐지고 최소화된 최신 CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+<!-- 부가적인 테마 -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+<!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<body>
+
+<div class="container" style="margin-top: 10px;">
+    <div class="row">
+        <div class="col-xs-3">
+            <a href="/">로고</a>
+        </div>
+        <div class="col-xs-4"></div>
+        <div class="col-xs-2"><a href="/board">자유게시판</a></div>
+        <div class="col-xs-1"><a href="/login">로그인</a></div>
+        <div class="col-xs-2">
+            <button type="submit" onclick="location.href='/myPage'"  >
+                마이페이지
+            </button>
+        </div>
+    </div>
+</div>
+<div style="text-align: center; margin-top: 100px">
+    <a href="/write">글쓰기</a>
+</div>
+
+
+<div class="row" style="margin-top: 50px; margin-bottom: 10px; text-align: center;">
+
+    <div class="col-xs-3"><h3>No.</h3></div>
+    <div class="col-xs-3"><h3>제목</h3></div>
+    <div class="col-xs-3"><h3>작성자</h3></div>
+    <div class="col-xs-3"><h3>작성일</h3></div>
+
+</div>
+<hr>
+<div class="row" >
+    <div id="contents">
+
+
+    </div>
+</div>
+
+<script>
+
+    getBoardINfo();
+    function getBoardINfo(){
+        $.ajax({
+            type:"get",
+            url:"/contentsListInfo",
+            success: function(data){
+
+                let contents = document.getElementById('contents');
+                data.forEach(function(content){
+                    let bid = document.createElement('h4');
+                    bid.setAttribute("class", "col-xs-3");
+                    bid.innerHTML = content.bbID;
+
+                    let title = document.createElement('button');
+                    title.setAttribute("class", "col-xs-3");
+                    title.innerText = content.title;
+
+                    let name = document.createElement('h4');
+                    name.setAttribute("class", "col-xs-3");
+                    name.innerHTML = content.name;
+
+                    let date = document.createElement('h4');
+                    date.setAttribute("class", "col-xs-3");
+                    date.innerHTML = content.uploadTime;
+
+
+                    title.addEventListener("click", ()=>{
+                        window.location.replace('/detailContent/'+content.bbID);
+                    });
+
+                    let eachContent = document.createElement('div');
+                    eachContent.setAttribute("style", "text-align:center; margin-top:10px;  ")
+                    eachContent.append(bid);
+                    eachContent.append(title);
+                    eachContent.append(name)
+                    eachContent.append(date);
+                    contents.appendChild(eachContent);
+
+                });
+            }, error:function(){
+                alert("error");
+            }
+        })
+    }
+
+
+
+</script>
+
+
+
+
+</body>
+</html>

@@ -28,7 +28,7 @@ spring:
 
 #  mail:
 #    host: smtp.gmail.com
-#    port: 587
+#    port: 587c
 #    username: FamilyStory.mailservice@gmail.com
 #    password: myFamily_team6!!
 #    properties:
