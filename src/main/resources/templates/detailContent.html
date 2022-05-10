@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<!-- 합쳐지고 최소화된 최신 CSS -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css">
+
+<!-- 부가적인 테마 -->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap-theme.min.css">
+
+<!-- 합쳐지고 최소화된 최신 자바스크립트 -->
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script>
+<body>
+
+
+
+<div class="container" style="margin-top: 10px;">
+    <div class="row">
+        <div class="col-xs-3">
+            <a href="/">로고</a>
+        </div>
+        <div class="col-xs-4"></div>
+        <div class="col-xs-2"><a href="/board">자유게시판</a></div>
+        <div class="col-xs-1"><a href="/login">로그인</a></div>
+        <div class="col-xs-2">
+            <button type="submit" onclick="location.href='/myPage'"  >
+                마이페이지
+            </button>
+        </div>
+    </div>
+</div>
+<div style="text-align: center; margin-top: 100px">
+    <h1>내용</h1>
+    <a href="/board">목록</a>
+    <table border="1" style="margin-left: 400px">
+
+        <tr><!-- 첫번째 줄 시작 -->
+            <td>번호</td>
+            <td id="bID"></td>
+            <td>작성일</td>
+            <td id="date"></td>
+        </tr><!-- 첫번째 줄 끝 -->
+        <tr><!-- 두번째 줄 시작 -->
+            <td>작성자</td>
+            <td  id = "name"></td>
+        </tr><!-- 두번째 줄 끝 -->
+        <tr><!-- 두번째 줄 시작 -->
+            <td>제목</td>
+            <td  id = "title"></td>
+        </tr><!-- 두번째 줄 끝 -->
+        <tr><!-- 두번째 줄 시작 -->
+            <td>내용</td>
+            <td  id = "content"></td>
+        </tr><!-- 두번째 줄 끝 -->
+    </table>
+
+
+
+
+</div>
+
+
+
+
+
+    <div style="text-align: center;">
+        <div id="deleteBtn"> </div>
+        <div id="updateBtn"></div>
+    </div>
+
+
+
+    <div class="row">
+        <div style="text-align: center; margin-top: 40px">
+            <div style="text-align: center">
+                <textarea id="comment" placeholder="내용을 입력해주세요" style="width: 700px; height: 100px; "></textarea>
+            </div>
+            <div style="text-align: center">
+
+
+
+                <font id = "check" size="2"> </font>
+                <div id="btn">
+                    등록
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row" style="margin-left: 200px; margin-top: 100px;">
+
+        <div style="text-align: center">
+            <div id="commentList">
+
+            </div>
+        </div>
+
+    </div>
+
+
+
+
+    <div class="edit">
+        <div class="modal">
+            <h1>- Happy New Year 2021 -</h1>
+            <h2>2021년 신축년 (辛丑年) </h2>
+            <h2>새해 복 많이 받으세요!</h2>
+            <figure><img src="ricecake.jpg" alt=""></figure>
+        </div>
+    </div>
+
+</tr>
+<script>
+    let curURL = window.location.href;
+    let urlArr = curURL.split("/");
+    let bId = urlArr[urlArr.length-1];
+    $(document).ready(function () {
+        findContent();
+        findComment();
+        deleteContent();
+
+
+        $("#btn").on('click', function() {
+            saveComment();
+        })
+    });
+
+    function deleteContent(){
+        $.ajax({
+            url: "/deleteContent",
+            type: "GET",
+            data: {
+                bID:bId
+            },
+            success: function(data){
+                if(data==true){
+                    //삭제 버튼 생겨
+                    let deletebtn = document.getElementById("deleteBtn");
+                    let del = document.createElement('button');
+                    del.innerHTML = "게시물 삭제";
+                    deletebtn.appendChild(del);
+
+                    del.addEventListener("click", ()=>{
+                        $.ajax({
+                            url: "/deleteBoard",
+                            type: "GET",
+                            dataType:"json",
+                            data: {
+                                bID : bId
+                            },
+                            success: function (data){
+                                alert("게시글이 삭제되었습니다.")
+                                window.location.href = "/board";
+
+                            }, error:function(){
+                                alert("에러");
+                                window.location.replace('/board') ;
+                            }
+                        });
+                    });
+
+
+                }
+
+            },error:function(){
+                alert("error");
+            }
+        });
+    }
+
+    function saveComment(){
+
+        $.ajax({
+            url: "/saveComment",
+            type: "GET",
+            data: {
+                comment:$("#comment").val(),
+                bID:bId
+            },
+            success: function(data){
+
+                if(data==true){
+                    window.location.href = "/detailContent/"+bId;
+                }
+
+                else{
+                    $("#check").html("최소 한글자 이상을 입력하세요. ");
+                    $("#check").attr('color', 'red');
+                }
+            },error:function(){
+                alert("error");
+            }
+        });
+    }
+    function findContent() {
+        $.ajax({
+            url: "/detailContent",
+            type: "GET",
+            data: {
+                bID:bId
+            },
+            success: function(data){
+                let bID = document.getElementById('bID');
+                bID.innerHTML = data.bbID
+                let date = document.getElementById('date');
+                date.innerHTML = data.uploadTime
+                let name = document.getElementById('name');
+                name.innerHTML = data.name
+                let title = document.getElementById('title');
+                let title1 = document.createElement('div');
+                title1.setAttribute('id', 'titleID');
+                title1.innerHTML = data.title;
+                title.appendChild(title1);
+
+                let content = document.getElementById('content');
+                let content1 = document.createElement('div');
+                content1.setAttribute('id', 'contentID');
+                content1.innerHTML = data.content;
+                content.appendChild(content1);
+
+                //여기는 수정 버튼 로직인데 deleteContent에서도 같은 로직이라서 해당 url로 매핑한다.
+                $.ajax({
+                    url: "/deleteContent",
+                    type: "GET",
+                    data: {
+                        bID:bId
+                    },
+                    success: function(flag){
+                        if(flag==true){
+                            //수정 버튼 생겨
+                            let updatebtn1 = document.getElementById("updateBtn");
+                            let update1 = document.createElement('button');
+                            update1.innerHTML = "게시물 수정";
+                            updatebtn1.appendChild(update1);
+                            update1.addEventListener("click", ()=>{
+                                $('#titleID').empty();
+                                $('#contentID').empty();
+                                $('#updateBtn').empty();
+
+                                let title3 = document.getElementById('title');
+                                let editTitle = document.createElement('input')
+                                editTitle.setAttribute('type', 'text');
+                                editTitle.setAttribute('id', 'ti');
+                                editTitle.setAttribute('value', data.title);
+                                title3.appendChild(editTitle);
+                                let content3 = document.getElementById('content');
+                                let editContent = document.createElement('input')
+                                editContent.setAttribute('type', 'text');
+                                editContent.setAttribute('id', 'co');
+                                editContent.setAttribute('value', data.content);
+                                content3.appendChild(editContent);
+
+                                let updatebtn2 = document.getElementById("updateBtn");
+                                let update2 = document.createElement('button');
+                                update2.setAttribute('id', 'update2')
+                                update2.innerHTML = "수정 완료";
+                                updatebtn2.appendChild(update2);
+                                $("#update2").on('click', function() {
+                                    saveUpdateContent();
+                                })
+                                function saveUpdateContent(){
+                                    $.ajax({
+                                        url: "/updateContent",
+                                        type: "GET",
+                                        dataType:"json",
+                                        data: {
+                                            bID : bId,
+                                            ti: $("#ti").val(),
+                                            co : $("#co").val(),
+                                        },
+                                        success: function (data){
+                                            if(data==true){
+                                                window.location.replace('/detailContent/'+bId) ;
+                                            }
+                                        }, error:function(){
+                                            alert("에러");
+                                            window.location.replace('/board') ;
+                                        }
+                                    });
+                                }
+
+                            });
+                        }
+                    },error:function(){
+                        alert("error");
+                    }
+                });
+            },error:function(){
+                alert("error");
+            }
+        });
+    }
+
+    function findComment() {
+        $.ajax({
+            url: "/findComment",
+            type: "GET",
+            data: {
+                bID:bId
+            },
+            success: function(data){
+                let commentList = document.getElementById('commentList');
+                data.forEach(function(comment) {
+                    let div1 = document.createElement('div');
+                    div1.setAttribute('class', 'row');
+                    div1.setAttribute('style', 'width: 700px; text-align:center; ');
+                    let name = document.createElement('div');
+                    name.setAttribute('class', 'col-xs-2')
+                    name.innerHTML = comment.writerName;
+                    let content = document.createElement('div');
+                    content.setAttribute('id', comment.cmID);
+                    content.setAttribute('class', 'col-xs-7')
+                    content.innerHTML= comment.commentContent;
+                    div1.appendChild(name);
+                    div1.appendChild(content);
+
+                    $.ajax({
+                        url: "/deleteCommentCheck",
+                        type: "GET",
+                        data: {
+                            bID:bId,
+                            cmID:comment.cmID
+                        },
+                        success: function(data){
+                            if(data==true){
+                                //삭제 버튼 생겨
+                                let delComment = document.createElement('button');
+                                delComment.innerHTML = "삭제";
+
+                                div1.appendChild(delComment);
+                                delComment.addEventListener("click", ()=>{
+                                    $.ajax({
+                                        url: "/deleteComment",
+                                        type: "GET",
+                                        dataType:"json",
+                                        data: {
+                                            cmID:comment.cmID,
+                                            bID : bId
+                                        },
+                                        success: function (data){
+                                            if(data==true){
+                                                window.location.replace('/detailContent/'+bId) ;
+                                            }
+                                        }, error:function(){
+                                            alert("에러");
+                                            window.location.replace('/board') ;
+                                        }
+                                    });
+                                });
+                            }
+                        },error:function(){
+                            alert("error");
+                        }
+                    });
+
+                    $.ajax({
+                        url: "/updateCommentCheck",
+                        type: "GET",
+                        data: {
+                            cmID:comment.cmID
+                        },
+                        success: function(data){
+                            if(data==true){
+                                //수정 버튼 생겨
+                                let updateComment = document.createElement('button');
+
+                                updateComment.innerHTML = "수정";
+                                div1.appendChild(updateComment);
+                                updateComment.addEventListener("click", ()=>{
+                                    $.ajax({
+                                        url: "/updateComment",
+                                        type: "GET",
+                                        dataType:"json",
+                                        data: {
+                                            cmID:comment.cmID
+                                        },
+                                        success: function (data){
+                                            if(data==true){
+                                                const name = '#'+ comment.cmID;
+                                                const name2 = comment.cmID;
+                                                let con = $('name').val();
+                                                $(name).empty(); //name만
+
+                                                let div2 = document.createElement('div');
+                                                div2.setAttribute('class', 'col-xs-4');
+                                                let content1 = document.createElement('input');
+                                                content1.setAttribute('id', "editComment");
+                                                content1.setAttribute('type', 'text');
+                                                content1.setAttribute('value', comment.commentContent)
+                                       /*         content.setAttribute('id', comment.cmID+'n');*/
+                                                div2.appendChild(content1);
+                                                div1.appendChild(div2);
+
+                                                let div3 = document.createElement('div');
+                                                div3.setAttribute('class', 'col-xs-2');
+                                                let upbtn = document.createElement('button');
+                                                upbtn.innerHTML="수정";
+                                                div3.appendChild(upbtn);
+                                                div1.appendChild(div3);
+
+                                                upbtn.addEventListener("click", ()=>{
+                                                    $.ajax({
+                                                        url: "/updateCommentSave",
+                                                        type: "GET",
+                                                        dataType:"json",
+                                                        data: {
+                                                            cmID:comment.cmID,
+                                                            commentContent: $("#editComment").val()
+                                                        },
+                                                        success: function (data){
+                                                            if(data==true){
+                                                                window.location.replace('/detailContent/'+bId) ;
+                                                            }
+                                                        }, error:function(){
+                                                            alert("에러");
+                                                            window.location.replace('/board') ;
+                                                        }
+                                                    });
+                                                });
+
+
+
+
+                                               // window.location.replace('/detailContent/'+bId) ;
+                                            }
+                                        }, error:function(){
+                                            alert("에러");
+                                            window.location.replace('/board') ;
+                                        }
+                                    });
+                                });
+                            }
+                        },error:function(){
+                            alert("error");
+                        }
+                    });
+
+
+                    commentList.appendChild(div1);
+                });
+
+
+            },error:function(){
+                alert("error");
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+</script>
+
+</body>
+</html>

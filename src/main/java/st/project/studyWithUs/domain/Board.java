@@ -12,14 +12,17 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class Contents {
+public class Board {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long cID;
+    private Long bID;
 
     @NotNull
     private String content;
+
+    @NotNull
+    private String title;
 
     @NotNull
     private LocalDate uploadTime;
@@ -28,6 +31,7 @@ public class Contents {
     @JoinColumn(name="uID")
     private User user;
 
-    @OneToMany(mappedBy = "contents", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 }
+

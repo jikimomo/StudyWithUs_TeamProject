@@ -21,7 +21,8 @@
             <div class="col-xs-3">
                 <a href="/">로고</a>
             </div>
-            <div class="col-xs-6"></div>
+            <div class="col-xs-4"></div>
+            <div class="col-xs-2"><a href="/board">자유게시판</a></div>
             <div class="col-xs-1"><a href="/login">로그인</a></div>
             <div class="col-xs-2">
                 <button type="submit" onclick="location.href='/myPage'"  >
@@ -138,7 +139,9 @@
                                     }
                                 });
                             });
+
                             let eachTeam = document.createElement('div');
+
                             eachTeam.append(image);
                             eachTeam.append(teamName);
                             eachTeam.append(teamContent);

@@ -40,7 +40,7 @@ public class User {
     private List<UserTeam> userTeams = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Contents> contents = new ArrayList<>();
+    private List<Board> contents = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<RefundUserAccount> refundUserAccounts = new ArrayList<>();

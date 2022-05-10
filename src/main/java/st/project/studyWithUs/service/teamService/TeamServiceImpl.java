@@ -166,6 +166,4 @@ public class TeamServiceImpl implements TeamService {
     }
 }
 
-//https://swexpertacademy.com/main/sst/intro.do
-//https://hyundai-autoever.recruiter.co.kr/app/jobnotice/view?systemKindCode=MRS2&jobnoticeSn=96551
-//https://hyundai-autoever.recruiter.co.kr/app/jobnotice/view?systemKindCode=MRS2&jobnoticeSn=95862
+
